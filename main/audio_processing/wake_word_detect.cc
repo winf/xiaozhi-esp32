@@ -57,8 +57,13 @@ void WakeWordDetect::Initialize(AudioCodec* codec) {
         input_format.push_back('R');
     }
     afe_config_t* afe_config = afe_config_init(input_format.c_str(), models, AFE_TYPE_SR, AFE_MODE_HIGH_PERF);
+#if CONFIG_USE_REALTIME_CHAT   
+    afe_config->aec_init = false; 
+    afe_config->aec_mode = AEC_MODE_SR_LOW_COST;
+#else
     afe_config->aec_init = codec_->input_reference(); 
-    afe_config->aec_mode = AEC_MODE_VOIP_HIGH_PERF;//AEC_MODE_VOIP_LOW_COST;//AEC_MODE_SR_LOW_COST;//AEC_MODE_SR_HIGH_PERF;
+    afe_config->aec_mode = AEC_MODE_SR_LOW_COST;
+#endif
     
     afe_config->afe_perferred_core = 1;
     afe_config->afe_perferred_priority = 1;
